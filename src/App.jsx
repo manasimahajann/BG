@@ -7,7 +7,7 @@ function App() {
 	return (
 		<BrowserRouter>
 			<Routes>
-				<Route path="/" element={<Gita />} />
+				<Route path="/BG" element={<Gita />} />
 			</Routes>
 		</BrowserRouter>
 	)
