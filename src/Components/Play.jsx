@@ -27,10 +27,10 @@ function Play({verse, selectedLanguage, verses_g}) {
 			// Example: Navigate to home on back button press
 			navigate("/")
 		}
-		console.log("asdfad fasdddddddd")
 		window.addEventListener("popstate", handleBackButton)
 		return () => window.removeEventListener("popstate", handleBackButton)
 	}, [navigate])
+
 	useEffect(() => {
 		// Use filter to get an array of chapters that match the chapter ID
 		const newChapterArray = all_verses.filter(
@@ -59,7 +59,7 @@ function Play({verse, selectedLanguage, verses_g}) {
 	}
 	return (
 		<>
-			<div className="h-10  w-[90%] flex items-center justif text-orange-500 text-lg">
+			<div className="h-10  w-[90%] flex items-center justify text-orange-500 text-lg">
 				{/* <FaArrowLeft onClick={goToHome} className=" cursor-pointer" /> */}
 
 				<div className="flex-grow text-center font-bold">
