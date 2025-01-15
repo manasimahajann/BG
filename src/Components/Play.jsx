@@ -62,12 +62,12 @@ function Play({verse, selectedLanguage, verses_g}) {
 			<div className="h-10  w-[90%] flex items-center justify text-orange-500 text-lg">
 				{/* <FaArrowLeft onClick={goToHome} className=" cursor-pointer" /> */}
 
-				<div className="flex-grow text-center font-bold">
+				<div className="flex-grow text-center text-xl font-bold">
 					{`BG ${currentVerse.chapter_id + "." + currentVerse.verse_number}`}
 				</div>
 			</div>
 
-			<div className="w-[100%] m-1 h-[13rem] text-lg text-orange-500 font-semibold bg-white shadow-sm rounded-lg px-5 py-4 transition-transform transform overflow-hidden items-start flex flex-col music-handler-container">
+			<div className="w-[100%] m-1 h-[13rem] text-lg text-orange-500 font-semibold bg-white shadow-sm rounded-lg px-5 py-4 transition-transform transform scale-105 overflow-hidden items-start flex flex-col music-handler-container">
 				{currentVerse !== null
 					? language === "Sanskrit"
 						? currentVerse.text
@@ -88,7 +88,7 @@ function Play({verse, selectedLanguage, verses_g}) {
 				"music handler not working"
 			)}
 
-			<p className="text-orange-500 m-1 font-bold text-center text-xl flex">
+			<p className="text-orange-500 m-1 font-bold text-center text-2xl flex">
 				<MdKeyboardDoubleArrowLeft
 					className="mt-1.5 mr-2"
 					onClick={() => {
@@ -109,7 +109,7 @@ function Play({verse, selectedLanguage, verses_g}) {
 				/>
 			</p>
 
-			<div className="flex text-orange-500 font-semibold text-center text-x items-center mb-1">
+			<div className="flex text-orange-500 font-semibold text-center text-xl items-center mb-1">
 				<MdKeyboardArrowLeft
 					className="mr-2 cursor-pointer hover:scale-110"
 					onClick={() => handleVerseDecrement()}
@@ -123,7 +123,7 @@ function Play({verse, selectedLanguage, verses_g}) {
 				/>
 			</div>
 
-			<div className="grid grid-cols-6 gap-1 w-[50%] mx-auto mb-5 ">
+			<div className="grid grid-cols-6 gap-1 w-[55%] mx-auto mb-5 mt-2">
 				{verses.map((verse, i) => (
 					<span
 						key={i}

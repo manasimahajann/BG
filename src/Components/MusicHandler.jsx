@@ -1,20 +1,24 @@
 import React, {useEffect, useRef, useState} from "react"
+
 import {FaPlay} from "react-icons/fa"
 import {IoPauseSharp} from "react-icons/io5"
 import {BsArrowRepeat} from "react-icons/bs"
 import "./MusicHandler.css"
 import {TbRewindForward10} from "react-icons/tb"
 import {TbRewindBackward10} from "react-icons/tb"
-
+import {openDB} from "idb"
 function MusicHandler({url}) {
 	const audioRef = useRef(null)
+
 	const [progress, setProgress] = useState(0)
 	const [duration, setDuration] = useState(0)
+
 	const [isPlaying, setIsPlaying] = useState(true)
 	const [isRepeating, setIsRepeating] = useState(false)
 
 	const [isClickedB, setIsClickedB] = useState(false)
 	const [isClickedF, setIsClickedF] = useState(false)
+
 	const [currentUrl, setCurrentUrl] = useState(url) // Track the current URL
 	const [isAudioReady, setIsAudioReady] = useState(false)
 
@@ -28,12 +32,28 @@ function MusicHandler({url}) {
 	}
 	const forwardByTenSeconds = () => {
 		const newTime = audioRef.current.currentTime + 10
-		audioRef.current.currentTime = newTime
-		setProgress((newTime / duration) * 100)
-		// Temporarily set the clicked state to true
-		setIsClickedF(true)
+		if (isNaN(audioRef.current.duration) || audioRef.current.duration === 0) {
+			console.warn("Audio duration is not available.")
+			return
+		}
 
-		// Reset the state after 500ms (adjust as needed)
+		if (newTime <= audioRef.current.duration) {
+			try {
+				audioRef.current.currentTime = newTime
+
+				const progressValue = (newTime / audioRef.current.duration) * 100
+
+				setProgress(progressValue)
+
+				// Temporarily set the clicked state to true
+				setIsClickedF(true)
+			} catch (error) {
+				console.error("Error setting currentTime:", error)
+			}
+		} else {
+			console.warn("Cannot seek beyond the duration of the audio.")
+		}
+
 		setTimeout(() => {
 			setIsClickedF(false)
 		}, 500)
@@ -71,6 +91,25 @@ function MusicHandler({url}) {
 		setProgress(0)
 		setIsPlaying(false)
 	}
+	const initDB = async () => {
+		return openDB("AudioDB", 1, {
+			upgrade(db) {
+				if (!db.objectStoreNames.contains("verses")) {
+					const store = db.createObjectStore("verses", {keyPath: "id"})
+					store.createIndex("datetime", "datetime")
+					store.createIndex("clicks", "clicks")
+				}
+			},
+		})
+	}
+
+	// Save file to IndexedDB
+	const saveToDB = async (id, fileBlob) => {
+		const db = await initDB()
+		const datetime = new Date().toISOString()
+		const data = {id, fileBlob, datetime, clicks: 1}
+		await db.put("verses", data)
+	}
 
 	// Effect for handling audio source change
 	useEffect(() => {
@@ -80,18 +119,123 @@ function MusicHandler({url}) {
 		}
 	}, [url])
 
+	const getId = (currentUrl) => {
+		const match = String(currentUrl).match(/Ch(\d+)S(\d+)/)
+		if (match) {
+			const chapter = match[1].padStart(2, "0") // Add leading zero to chapter
+			const shloka = match[2].padStart(2, "0") // Add leading zero to shloka
+			let id = `${chapter}${shloka}`
+
+			return id
+		}
+	}
+	const handleDownload = async (currentUrl) => {
+		try {
+			const response = await fetch(currentUrl)
+
+			const id = getId(currentUrl)
+			const db = await initDB()
+			const record = await db.get("verses", id)
+
+			if (!record) {
+				const blob = await response.blob()
+				await saveToDB(id, blob)
+			}
+		} catch (error) {
+			console.error("Error downloading MP3:", error)
+		}
+	}
+	const getFromDB = async (id) => {
+		const db = await initDB()
+		return db.get("verses", id)
+	}
+	const incrementClicks = async (id) => {
+		const db = await initDB()
+		const record = await db.get("verses", id)
+		if (record) {
+			record.clicks += 1
+			await db.put("verses", record)
+		}
+	}
+	const handlePlay = async (currentUrl) => {
+		let id = getId(currentUrl)
+		const record = await getFromDB(id)
+		if (record) {
+			incrementClicks(id)
+			const url = URL.createObjectURL(record.fileBlob)
+			audioRef.current.src = url
+			return true
+		} else {
+			audioRef.current.src = currentUrl
+
+			setTimeout(async () => {
+				await handleDownload(currentUrl)
+			}, 0) // Defer to the next event loop cycle
+		}
+	}
+	const clearExcessAudioChunks = async () => {
+		try {
+			// Open the database
+			const db = await initDB()
+			const transaction = db.transaction(["verses"], "readwrite")
+			const store = transaction.objectStore("verses")
+
+			// Fetch all records
+			const allRecords = await store.getAll()
+
+			if (allRecords.length > 30) {
+				// Sort records by clicks (ascending) and datetime (oldest first)
+				allRecords.sort((a, b) => {
+					if (a.clicks !== b.clicks) {
+						return a.clicks - b.clicks // Sort by clicks ascending
+					}
+					return new Date(a.datetime) - new Date(b.datetime) // Sort by datetime ascending
+				})
+
+				// Remove all but the top 2 records
+				const recordsToRemove = allRecords.slice(0, allRecords.length - 30)
+
+				for (const record of recordsToRemove) {
+					await store.delete(record.id) // Delete each record
+				}
+
+				console.log(`Removed ${recordsToRemove.length} records.`)
+			} else {
+				console.log("No excess records to remove.")
+			}
+
+			transaction.oncomplete = () => {
+				console.log("Database cleanup complete.")
+			}
+
+			transaction.onerror = (error) => {
+				console.error("Error during transaction:", error.target.error)
+			}
+		} catch (error) {
+			console.error("Error clearing excess audio chunks:", error)
+		}
+	}
+
+	useEffect(() => {
+		clearExcessAudioChunks()
+	}, [])
+
 	// Effect to initialize the audio when the URL changes
 	useEffect(() => {
-		if (audioRef.current) {
-			audioRef.current.pause()
-			audioRef.current.src = currentUrl
-			audioRef.current.load() // Load the new audio source
-			setProgress(0)
+		const initializeAudio = async () => {
+			if (audioRef.current) {
+				audioRef.current.pause()
+				await handlePlay(currentUrl)
+				audioRef.current.load()
+				setProgress(0)
 
-			audioRef.current.oncanplay = () => {
-				setIsAudioReady(true) // Set ready when the audio can play
+				audioRef.current.oncanplay = () => {
+					setIsAudioReady(true)
+				}
 			}
 		}
+
+		initializeAudio()
 	}, [currentUrl])
 
 	// Effect for controlling playback
@@ -114,6 +258,7 @@ function MusicHandler({url}) {
 	return (
 		<div className="music-handler-container">
 			<audio
+				preload="auto"
 				ref={audioRef}
 				autoPlay={false}
 				loop={isRepeating}
