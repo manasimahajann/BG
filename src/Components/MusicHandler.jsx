@@ -192,7 +192,7 @@ function MusicHandler({url}) {
 					return new Date(a.datetime) - new Date(b.datetime) // Sort by datetime ascending
 				})
 
-				// Remove all but the top 2 records
+				// Remove all but the top 30 records
 				const recordsToRemove = allRecords.slice(0, allRecords.length - 30)
 
 				for (const record of recordsToRemove) {
