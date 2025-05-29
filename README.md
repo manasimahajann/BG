@@ -1,6 +1,17 @@
-# React + Vite
+# Bhagavad Gita App
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+##This is an attempt to get all shlokas of Bhagvat gita together for practice.
+
+First screen is with all the chapters
+![image](https://github.com/user-attachments/assets/742584b6-24b7-4f47-a3d4-a29bf0e25eb6)
+When clickeed on any of the chapters it takes to the verses inside that chapter
+![image](https://github.com/user-attachments/assets/7209e5a8-d622-4e6e-863b-f32c9de1036f)
+Further when clicked on the verse, it starts the recitation of the shloka with the verse on the screen. The audio can be paused, moved forward and backword with the buttons on the screen.
+![image](https://github.com/user-attachments/assets/188ad890-93ff-4806-abb4-102d46cada5f)
+If needed to move to a diifferent chapter for practice or to a next verse we have the chapter and verse arrows. For easy visualization, the number of shlokas also are on the screen when clicked on particular box, it will start playing that shloka.
+![image](https://github.com/user-attachments/assets/937bdf38-8ced-4877-ba0d-1b71af4c1492)
+
+
 
 Currently, two official plugins are available:
 
