@@ -6,7 +6,7 @@ import {BsArrowRepeat} from "react-icons/bs"
 import "./MusicHandler.css"
 import {TbRewindForward10} from "react-icons/tb"
 import {TbRewindBackward10} from "react-icons/tb"
-import {openDB} from "idb"
+
 function MusicHandler({url}) {
 	const audioRef = useRef(null)
 
@@ -91,33 +91,108 @@ function MusicHandler({url}) {
 		setProgress(0)
 		setIsPlaying(false)
 	}
-	const initDB = async () => {
-		return openDB("AudioDB", 1, {
-			upgrade(db) {
-				if (!db.objectStoreNames.contains("verses")) {
-					const store = db.createObjectStore("verses", {keyPath: "id"})
-					store.createIndex("datetime", "datetime")
-					store.createIndex("clicks", "clicks")
-				}
-			},
-		})
-	}
+	// const initDB = async () => {
+	// 	return openDB("AudioDB", 1, {
+	// 		upgrade(db) {
+	// 			if (!db.objectStoreNames.contains("verses")) {
+	// 				const store = db.createObjectStore("verses", {keyPath: "id"})
+	// 				store.createIndex("datetime", "datetime")
+	// 				store.createIndex("clicks", "clicks")
+	// 			}
+	// 		},
+	// 	})
+	// }
 
-	// Save file to IndexedDB
-	const saveToDB = async (id, fileBlob) => {
-		const db = await initDB()
-		const datetime = new Date().toISOString()
-		const data = {id, fileBlob, datetime, clicks: 1}
-		await db.put("verses", data)
-	}
+	// // Save file to IndexedDB
+	// const saveToDB = async (id, fileBlob) => {
+	// 	const db = await initDB()
+	// 	const datetime = new Date().toISOString()
+	// 	const data = {id, fileBlob, datetime, clicks: 1}
+	// 	await db.put("verses", data)
+	// }
 
 	// Effect for handling audio source change
-	useEffect(() => {
-		if (url !== currentUrl) {
-			setCurrentUrl(url)
-			setIsAudioReady(false) // Reset readiness
-		}
-	}, [url])
+
+	// const handleDownload = async (currentUrl) => {
+	// 	try {
+	// 		const response = await fetch(currentUrl)
+
+	// 		const id = getId(currentUrl)
+	// 		const db = await initDB()
+	// 		const record = await db.get("verses", id)
+
+	// 		if (!record) {
+	// 			const blob = await response.blob()
+	// 			await saveToDB(id, blob)
+	// 		}
+	// 	} catch (error) {
+	// 		console.error("Error downloading MP3:", error)
+	// 	}
+	// }
+
+	// const getFromDB = async (id) => {
+
+	// 		if (!id) throw new Error("Invalid ID passed to getFromDB")
+
+	// 		const db = await initDB()
+
+	// 		return db.get("verses", id)
+
+	// }
+	// const clearExcessAudioChunks = async () => {
+	// 	try {
+	// 		// Open the database
+	// 		const db = await initDB()
+	// 		const transaction = db.transaction(["verses"], "readwrite")
+	// 		const store = transaction.objectStore("verses")
+
+	// 		// Fetch all records
+	// 		const allRecords = await store.getAll()
+
+	// 		if (allRecords.length > 30) {
+	// 			// Sort records by clicks (ascending) and datetime (oldest first)
+	// 			allRecords.sort((a, b) => {
+	// 				if (a.clicks !== b.clicks) {
+	// 					return a.clicks - b.clicks // Sort by clicks ascending
+	// 				}
+	// 				return new Date(a.datetime) - new Date(b.datetime) // Sort by datetime ascending
+	// 			})
+
+	// 			// Remove all but the top 30 records
+	// 			const recordsToRemove = allRecords.slice(0, allRecords.length - 30)
+
+	// 			for (const record of recordsToRemove) {
+	// 				await store.delete(record.id) // Delete each record
+	// 			}
+
+	// 			console.log(`Removed ${recordsToRemove.length} records.`)
+	// 		} else {
+	// 			console.log("No excess records to remove.")
+	// 		}
+
+	// 		transaction.oncomplete = () => {
+	// 			console.log("Database cleanup complete.")
+	// 		}
+
+	// 		transaction.onerror = (error) => {
+	// 			console.error("Error during transaction:", error.target.error)
+	// 		}
+	// 	} catch (error) {
+	// 		console.error("Error clearing excess audio chunks:", error)
+	// 	}
+	// }
+
+	// useEffect(() => {
+	// 	clearExcessAudioChunks()
+	// }, [])
+	// const incrementClicks = async (id) => {
+	// 	const db = await initDB()
+	// 	const record = await db.get("verses", id)
+	// 	if (record) {
+	// 		record.clicks += 1
+	// 		await db.put("verses", record)
+	// 	}
+	// }
 
 	const getId = (currentUrl) => {
 		const match = String(currentUrl).match(/Ch(\d+)S(\d+)/)
@@ -129,96 +204,30 @@ function MusicHandler({url}) {
 			return id
 		}
 	}
-	const handleDownload = async (currentUrl) => {
-		try {
-			const response = await fetch(currentUrl)
-
-			const id = getId(currentUrl)
-			const db = await initDB()
-			const record = await db.get("verses", id)
-
-			if (!record) {
-				const blob = await response.blob()
-				await saveToDB(id, blob)
-			}
-		} catch (error) {
-			console.error("Error downloading MP3:", error)
-		}
-	}
-	const getFromDB = async (id) => {
-		const db = await initDB()
-		return db.get("verses", id)
-	}
-	const incrementClicks = async (id) => {
-		const db = await initDB()
-		const record = await db.get("verses", id)
-		if (record) {
-			record.clicks += 1
-			await db.put("verses", record)
-		}
-	}
-	const handlePlay = async (currentUrl) => {
-		let id = getId(currentUrl)
-		const record = await getFromDB(id)
-		if (record) {
-			incrementClicks(id)
-			const url = URL.createObjectURL(record.fileBlob)
-			audioRef.current.src = url
-			return true
-		} else {
-			audioRef.current.src = currentUrl
-
-			setTimeout(async () => {
-				await handleDownload(currentUrl)
-			}, 0) // Defer to the next event loop cycle
-		}
-	}
-	const clearExcessAudioChunks = async () => {
-		try {
-			// Open the database
-			const db = await initDB()
-			const transaction = db.transaction(["verses"], "readwrite")
-			const store = transaction.objectStore("verses")
-
-			// Fetch all records
-			const allRecords = await store.getAll()
-
-			if (allRecords.length > 30) {
-				// Sort records by clicks (ascending) and datetime (oldest first)
-				allRecords.sort((a, b) => {
-					if (a.clicks !== b.clicks) {
-						return a.clicks - b.clicks // Sort by clicks ascending
-					}
-					return new Date(a.datetime) - new Date(b.datetime) // Sort by datetime ascending
-				})
-
-				// Remove all but the top 30 records
-				const recordsToRemove = allRecords.slice(0, allRecords.length - 30)
-
-				for (const record of recordsToRemove) {
-					await store.delete(record.id) // Delete each record
-				}
-
-				console.log(`Removed ${recordsToRemove.length} records.`)
-			} else {
-				console.log("No excess records to remove.")
-			}
-
-			transaction.oncomplete = () => {
-				console.log("Database cleanup complete.")
-			}
-
-			transaction.onerror = (error) => {
-				console.error("Error during transaction:", error.target.error)
-			}
-		} catch (error) {
-			console.error("Error clearing excess audio chunks:", error)
-		}
-	}
 
 	useEffect(() => {
-		clearExcessAudioChunks()
-	}, [])
+		if (url !== currentUrl) {
+			setCurrentUrl(url)
+			setIsAudioReady(false) // Reset readiness
+		}
+	}, [url])
+
+	const handlePlay = async (currentUrl) => {
+		// let id = getId(currentUrl)
+		// const record = await getFromDB(id)
+		// if (record) {
+		// 	incrementClicks(id)
+		// 	const url = URL.createObjectURL(record.fileBlob)
+		// 	audioRef.current.src = url
+		// 	return true
+		// } else {
+		audioRef.current.src = currentUrl
+
+		// 	setTimeout(async () => {
+		// 		await handleDownload(currentUrl)
+		// 	}, 0) // Defer to the next event loop cycle
+		// }
+	}
 
 	// Effect to initialize the audio when the URL changes
 	useEffect(() => {
@@ -266,7 +275,6 @@ function MusicHandler({url}) {
 				onLoadedMetadata={handleLoadedMetadata}
 				onEnded={handleAudioEnd}
 			>
-				<source src={url} type="audio/mp3" />
 				Your browser does not support the audio element.
 			</audio>
 			<div className="audio-controls">
