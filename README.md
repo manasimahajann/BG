@@ -1,5 +1,7 @@
 # Bhagavad Gita App
 Here is the link - https://tinyurl.com/BhavadGita
+
+
 ##This is an attempt to get all shlokas of Bhagvat gita together for practice.
 
 First screen is with all the chapters
