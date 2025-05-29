@@ -4,6 +4,10 @@ Here is the link - https://tinyurl.com/BhavadGita
 
 ##This is an attempt to get all shlokas of Bhagvat gita together for practice.
 
+This button at the top right will toggle between Sanskrit (Sa) and English (En)
+
+![image](https://github.com/user-attachments/assets/f600a08e-ad36-482c-9423-1baaec3eb633)
+
 First screen is with all the chapters
 
 ![image](https://github.com/user-attachments/assets/742584b6-24b7-4f47-a3d4-a29bf0e25eb6)
