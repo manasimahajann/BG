@@ -1,24 +1,25 @@
+import {useState} from "react"
+
 function LangauageBtns({onLanguageChange}) {
+	const [language, setLanguage] = useState("Sanskrit")
 	return (
 		<>
-			<div className="flex mb-2">
-				<div className="flex flex-grow text-center font-bold">
-					<button
-						className="w-full max-w-xs h-auto m-1 text-orange-500 bg-white border border-gray-300 shadow-sm rounded-lg text-left px-4 py-2 cursor-pointer transition-transform transform hover:scale-105 hover:bg-gray-50 overflow-hidden"
-						onClick={() => {
-							onLanguageChange("Sanskrit")
-						}}
-					>
-						Sanskrit
-					</button>
-					<button
-						className="w-full max-w-xs h-auto m-1 text-orange-500 bg-white border border-gray-300 shadow-sm rounded-lg text-left px-4 py-2 cursor-pointer transition-transform transform hover:scale-105 hover:bg-gray-50 overflow-hidden"
-						onClick={() => {
-							onLanguageChange("English")
-						}}
-					>
-						English
-					</button>
+			<div className="heading">
+				<div className="flex justify-between">
+					<div className="heading font-bold">Bhagvad Gita</div>
+
+					<div className="flex justify-end">
+						<button
+							className="heading-border flex justify-end "
+							onClick={() => {
+								const newLang = language === "Sanskrit" ? "English" : "Sanskrit"
+								setLanguage(newLang)
+								onLanguageChange(newLang)
+							}}
+						>
+							{language.slice(0, 2)}
+						</button>
+					</div>
 				</div>
 			</div>
 		</>

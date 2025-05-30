@@ -1,3 +1,89 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+ 
+.chapters-custom-button {
+  width: 100%;
+  max-width: 20rem; /* max-w-xs */
+  height: auto;
+  margin: 0.25rem; /* m-1 */
+  color: #f97316; /* text-orange-500 */
+  background-color: #ffffff; /* bg-white */
+  border: 1px solid #d1d5db; /* border-gray-300 */
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05); /* shadow-sm */
+  border-radius: 0.5rem; /* rounded-lg */
+  text-align: left;
+  padding: 0.5rem 1rem; /* px-4 py-2 */
+  cursor: pointer;
+  transition: transform 0.2s ease, background-color 0.2s ease;
+  overflow: hidden;
+}
+
+.chapters-custom-button:hover {
+  transform: scale(1.05);
+  background-color: #f9fafb; /* hover:bg-gray-50 */
+}
+
+.custom-language-style {
+  width: 100%; /* w-full */
+  max-width: 1rem; /* max-w-xs */
+  height: auto; /* h-auto */
+  margin: .5rem; /* m-1 */ 
+  color: #f97316; /* text-orange-500 */
+  background-color: #ffffff; /* bg-white */
+  border: 1px solid #d1d5db; /* border-gray-300 */
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05); /* shadow-sm */
+  border-radius: 0.5rem; /* rounded-lg */
+  text-align: center; /* text-left */
+  padding: 0.5rem 1rem; /* px-4 py-2 */
+  cursor: pointer; /* cursor-pointer */
+  transition: transform 0.2s ease, background-color 0.2s ease; /* transition-transform */
+  transform: translateZ(0); /* transform (used as base, not doing anything until hover) */
+  overflow: hidden; /* overflow-hidden */
+  
+  vertical-align: middle;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  
+}
+
+.custom-language-style:hover {
+  transform: scale(1.05); /* hover:scale-105 */
+  background-color: #f9fafb; /* hover:bg-gray-50 */
+}
+
+.heading{
+  width: 100%; /* w-full */
+  max-width: 20rem; /* max-w-xs */
+  height: auto; /* h-auto */  
+  color: #f97316; /* text-orange-500 */ 
+  text-align: center; /* text-left */
+  padding: 0.2rem .3rem; /* px-4 py-2 */
+  margin-top: 5px;
+  overflow: hidden; /* overflow-hidden */  
+  font-size: 1.25rem; 
+  margin: 5px 5px;
+}
+ 
+.heading-border{
+  width: 100%; /* w-full */
+  max-width: 20rem; /* max-w-xs */
+  height: auto; /* h-auto */  
+  color: #f97316; /* text-orange-500 */ 
+  text-align: center; /* text-left */
+  padding: 0.2rem .3rem; /* px-4 py-2 */
+  cursor: pointer; /* cursor-pointer */  
+  border-radius: 0.5rem; /* rounded-lg */
+  
+  border: 1px solid #d1d5db;
+  margin-top: 5px;
+  transition: transform 0.2s ease, background-color 0.2s ease; /* transition-transform */
+  transform: translateZ(0); /* transform (used as base, not doing anything until hover) */
+  overflow: hidden; /* overflow-hidden */ 
+  display: inline-block; 
+  font-size: 1.25rem; 
+}
+ 

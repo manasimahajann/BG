@@ -7,9 +7,9 @@ import Play from "./Components/Play"
 
 function App() {
 	return (
-		<BrowserRouter>
+		<BrowserRouter basename="/BG">
 			<Routes>
-				<Route path="/BG/chapters" element={<Gita />} />
+				<Route path="/chapters" element={<Gita />} />
 				<Route
 					path="/:chapter/verses/:selectedLanguage"
 					element={<Shlokas />}

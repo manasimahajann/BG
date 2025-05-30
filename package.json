@@ -2,7 +2,7 @@
   "name": "bg",
   "private": true,
   "version": "0.0.0",
-  "homepage": "https://manasimahajann.github.io/bg/",
+  "homepage": "https://manasimahajann.github.io/BG/",
   "type": "module",
   "scripts": {
     "predeploy": "npm run build",

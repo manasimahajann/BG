@@ -30,7 +30,7 @@ function Shlokas() {
 							key={i}
 							// onClick={() => handleVerseClicked(verse)}
 							to={`/${chapterNum}/verses/${i}/${selectedLanguage}`}
-							className="w-[95%] max-w-md h-auto m-1 text-orange-500 font-semibold bg-white border border-gray-300 shadow-sm text-left px-4 py-4 cursor-pointer transition-transform transform hover:scale-105 hover:bg-gray-50 overflow-hidden"
+							className="w-[95%] max-w-md h-auto m-1 text-orange-500 font-semibold bg-white border border-gray-300 shadow-sm text-left px-4 py-4 cursor-pointer transition-transform transform hover:scale-105 hover:bg-gray-50 overflow-hidden rounded-md"
 						>
 							{selectedLanguage === "Sanskrit"
 								? verse.text

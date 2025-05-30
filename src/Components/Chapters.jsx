@@ -199,7 +199,7 @@ function Chapters({selectedLanguage}) {
 				chapters.map((chapter, i) => (
 					<Link
 						key={i}
-						className="w-full max-w-xs h-auto m-1 text-orange-500 bg-white border border-gray-300 shadow-sm rounded-lg text-left px-4 py-2 cursor-pointer transition-transform transform hover:scale-105 hover:bg-gray-50 overflow-hidden"
+						className="chapters-custom-button"
 						//onClick={() => handleChapterClick(i)}
 						to={`/${i}/verses/${selectedLanguage}`}
 						style={{
